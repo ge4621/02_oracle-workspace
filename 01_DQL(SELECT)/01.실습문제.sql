@@ -111,21 +111,21 @@ FROM EMPLOYEE;
  
  
  
-*22. EMPLOYEE테이블에서 부서코드가 D5, D6, D9인 사원만 조회하되 D5면 총무부, D6면 기획부, D9면 영업부로 처리
- (단, 부서코드 오름차순으로 정렬)
+--22. EMPLOYEE테이블에서 부서코드가 D5, D6, D9인 사원만 조회하되 D5면 총무부, D6면 기획부, D9면 영업부로 처리
+ --(단, 부서코드 오름차순으로 정렬)
  SELECT DEPT_CODE
  FROM EMPLOYEE
  WHERE 
  
  
-*23. EMPLOYEE테이블에서 사번이 201번인 사원명, 주민번호 앞자리, 주민번호 뒷자리, 
- 주민번호 앞자리와 뒷자리의 합 조회
- SELECT EMP_NO(SUS
- FROM EMPLOYEE
- WHERE
+--23. EMPLOYEE테이블에서 사번이 201번인 사원명, 주민번호 앞자리, 주민번호 뒷자리, 
+ --주민번호 앞자리와 뒷자리의 합 조회
+ SELECT *
+ FROM EMPLOYEE;
+
  
  
-*24. EMPLOYEE테이블에서 부서코드가 D5인 직원의 보너스 포함 연봉 합 조회
+*--24. EMPLOYEE테이블에서 부서코드가 D5인 직원의 보너스 포함 연봉 합 조회
 
 
 
