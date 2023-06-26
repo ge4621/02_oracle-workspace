@@ -12,7 +12,7 @@ SELECT * FROM DBA_USERS; --이건 관리자 계정으로 들어왔기 때문에 보인다.
 --일반 사용자 계정 생성하는 구문(오로지 관리자 계정에서만 할 수 있다.)
 --[표현법] CREATE USER 계정명 IDENTIFIED BY 비밀번호;
 
-CREATE USER kh IDENTIFIED BY kh; --계정명은 대소문자 안가림
+CREATE USER kh IDENTIFIED BY kh; --계정명은 대소문자 안가림, 비밀번호는 대소문자를 가린다.
 
 --계정 추가해보기 => 오류!!
 
