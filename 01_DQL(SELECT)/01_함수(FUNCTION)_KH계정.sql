@@ -169,22 +169,12 @@ FROM DUAL;
 */
 
 --기본적으로 양쪽에 있는 문자들을 다 찾아서 제거
-SELECT TRIM('       K H     ')
-FROM DAUL; 
+SELECT TRIM('       K H     ') FROM DUAL; 
+SELECT TRIM('z' FROM 'ZZZZZZZZZZZKHZZZZZZZZZ') FROM DUAL; --앞뒤 바뀌면 안됨
 
-
-SELECT TRIM('       K H     ')
-FROM TRIM('2' FROM 'ZZZZZZZZZZZKHZZZZZZZZZ')
-FROM DUAL;
-
-STLECT TRIM(LEACING ' 2 ' FROM '2222-33333')
-FROM DYAL;  -- SEADING : 앞 => ;LTRIM과 유사
-
-STLECT TRIM(LEACING ' 2 ' FROM '2222-33333')
-FROM DYAL;  -- TRIMLING : 뒤 => RTRTM과 유사
-
-STLECT TRIM(BOTH ' 2 ' FROM '2222-33333')
-FROM DYAL;  -- BOTH : 양쪽 => 생략시 기본값
+SELECT TRIM(LEADING 'Z' FROM 'ZZZZZZZZZZKHZZZZZZZ') FROM DUAL; --LEADING : 앞 => LTRIM과 유사
+SELECT TRIM(TRAILING 'Z' FROM 'ZZZZZZZZZZKHZZZZZZZ') FROM DUAL; --TRAILING : 뒤 => RTRIM과 유사
+SELECT TRIM(BOTH 'Z' FROM 'ZZZZZZZZZZKHZZZZZZZ') FROM DUAL; --BOTH : 양쪽 => 생략시 기본값
 
 /*
     *LOWER / UPPER / INITCAP
@@ -325,7 +315,7 @@ SELECT SYSDATE, NEXT_DAY(SYSDATE,'6') FROM DUAL;
 SELECT SYSDATE, NEXT_DAY(SYSDATE,'FRIDAY') FROM DUAL; --현재 언어가 KOREAN이기 때문
 
 --언어변경
-SELECT * FROM NLS_SESSION_PARAMETERS;
+--SELECT * FROM NLS_SESSION_PARAMETERS;
 
 --ALTER SESSION SET NLS_LANGUAGE = AMERICAN;
 --ALTER SESSION SET NLS_LANGUAGE = KOREAN;
@@ -436,6 +426,161 @@ SELECT TO_DATE('980630', 'YYMMDD') FROM DUAL; --2098년 => 무조건 현재세기로 반영
 SELECT TO_DATE('140630', 'RRMMDD') FROM DUAL; -- 2014년
 SELECT TO_DATE('980630', 'RRMMDD') FROM DUAL; --1998년
 --RR : 해당 두자리 년도 값이 50미만일 경우 현재 세기 반영, 50이상을 경우 이전세기 반영
+
+--------------------------------------------------------------------------------
+/*
+    *TO_NUMBER : 문자타입의 데이터를 숫자타입으로 변환시켜주는 함수
+    
+    TO_NUMBER(문자, [포맷])             => 결과값은 NUMBER 타입
+*/
+SELECT TO_NUMBER('051234567')FROM DUAL; --0이 빠져서 숫자타입으로 저장됨
+
+SELECT '1000000000' + '550000' FROM DUAL; --오라클에서는 자동형변환 잘 되어있다.
+
+SELECT '1,000,000,000' + '550,000' FROM DUAL; --오류남 안에 숫자만 있어야 자동형변환이 된다.
+
+SELECT TO_NUMBER('1,000,000,000','9,999,999,999') + TO_NUMBER('550,000','999,999') FROM DUAL; --강제형변환
+
+--------------------------------------------------------------------------------
+/*
+    <NULL 처리함수>
+*/
+--**NVL(컬럼, 해당 커럼이 NULL일 경우 반환할 값)
+SELECT EMP_NAME, BONUS, NVL(BONUS,0)
+FROM EMPLOYEE;
+
+--전체 사원의 이름 보너스 포함 연봉
+SELECT EMP_NAME, (SALARY + SALARY * BONUS)*12, (SALARY + SALARY * NVL(BONUS,0))*12
+FROM EMPLOYEE;
+
+SELECT DEPT_CODE, NVL(DEPT_CODE,'부서없음')
+FROM EMPLOYEE;
+
+--NVL2(컬럼,반환값1, 반환값2)
+--컬럼값이 존재할 경우 반환값1반환
+--컬럼값이 NULL일 경우 반환값2반환
+
+SELECT EMP_NAME,BONUS,NVL2(BONUS,0.7,0.1)
+FROM EMPLOYEE;
+
+SELECT EMP_NAME, DEPT_CODE,NVL2(DEPT_CODE,'부서있음','부서없음')
+FROM EMPLOYEE;
+
+--NULLIF(비교대상1, 비교대상2)
+--두개의 값이 일치하면 NULL반환
+--두개의 값이 일치하지 않으면 비교대상1반환
+SELECT NULLIF('123','123') FROM DUAL;
+SELECT NULLIF('123','456') FROM DUAL;
+
+------------------------------------------------------------------------------
+/*
+    <선택함수>
+    *DECODE(비교하고자 하는 대상(컬럼 | 산술연산 | 함수식), 비교값1,결과값1, 비교값2,결과값2,....)
+    
+    SWITCH(비교대상){
+    CASE 비교값1 : BREAK;
+    CASE 비교값2 : BREAK;
+    .....
+    DEFAULT : 
+    }
+*/
+--사번, 사명, 주민번호
+SELECT EMP_ID,EMP_NAME,EMP_NO,SUBSTR(EMP_NO,8,1),
+DECODE(SUBSTR(EMP_NO,8,1),'1','남','2','여') AS "성별"
+FROM EMPLOYEE;
+
+--직원의 급여 조회시 각 직급별로 인상해서 조회
+--J7인 사원은 급여를 10% 인상(SALARY *1.1)
+--J6인 사원은 급여를 15% 인상(SALARY * 1.15)
+--J5인 사원은 급여를 20% 인상(SALARY * 1.2)
+--그 외의 사원은 급여를 5%인상(SALARY*1.05)
+
+--사원명, 직급코드,기존급여,인상된급여
+SELECT EMP_NAME, JOB_CODE, SALARY,
+DECODE(JOB_CODE, 'J7', SALARY * 1.1,
+                'J6',SALARY * 1.15,
+                'J5',SALARY * 1.2,
+                SALARY * 1.05)AS "인상된 급여"
+FROM EMPLOYEE;
+
+/*
+    *CASE WHEN THEN
+    
+    CASE WHEN 조건식1 THEN 결과값1
+         WHEN 조건식2 THEN 결과값2
+         ......
+         ELSE 결과값N
+    END
+    
+    자바에서의 IF-ELSE IF-ELSE 문과 유사하다.
+*/
+
+SELECT EMP_NAME, SALARY,
+        CASE WHEN SALARY >=5000000 THEN '고급 개발자'
+            WHEN SALARY >=3500000 THEN '중급 개발자'
+            ELSE '초급'
+        END AS "레벨"
+FROM EMPLOYEE;
+
+---------------------------<그룹함수>-----------------------------
+--1. SUM(숫자타입컬럼) : 해당 컬럼 값들의 총 합계를 구해서 반환해주는 함수
+
+--EMPLOYEE 테이블의 전 사원의 급여합
+SELECT SUM(SALARY)
+FROM EMPLOYEE; --전체사원이 한 그룹으로 묶임
+
+--남자 사원들의 총 급여 합
+SELECT SUM(SALARY)--3번
+FROM EMPLOYEE --1번
+WHERE SUBSTR(EMP_NO,8,1) IN ('1','3');--2번
+
+--부서코드가 D5인 사원들의 총 연봉 합
+SELECT SUM (SALARY *12)
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5';
+
+--2. AVG(숫자의 타입) : 해당 컬럼 값들의 평균값을 구해서 반환
+SELECT ROUND(AVG(SALARY))
+FROM EMPLOYEE;
+
+--3. MIN(여러타입) : 해당 컬럼값들 중에 가장 작을 값 구해서 반환
+SELECT MIN(EMP_NAME), MIN(SALARY), MIN(HIRE_DATE)
+FROM EMPLOYEE;
+
+--4. MAX(여러타입) : 해당 컬럼값들 중에 가장 큰값 구해서 반환
+SELECT MAX(EMP_NAME), MAX(SALARY), MAX(HIRE_DATE)
+FROM EMPLOYEE;
+
+--5. COUNT(*|컬럼|DISTINCT 컬럼) : 조회된 행 개수를 세서 반환
+--  COUNT(*) : 조회된 결과의 모든 행 개수를 세서 반환
+-- COUNT(컬럼) : 제시한 해당 컬럼 값이 NULL이 아닌것만 행 개수 세서 반환
+--  COUNT(DISTINCT 컬럼) : 해당 컬럼값 중복을 제거한 후 행 개수 세서 반환
+
+--전체 사원수
+SELECT COUNT(*)
+FROM EMPLOYEE;
+
+--여자사원수
+SELECT COUNT(*) --3번
+FROM EMPLOYEE --1번
+WHERE SUBSTR(EMP_NO,8,1)IN ('2','4'); --2번
+
+--보너스를 받는 사원 수
+SELECT COUNT(BONUS) -- 컬럼 NULL이 아닌것만 카우팅한다.
+FROM EMPLOYEE;
+
+--부서배치를 받은 사원 수
+SELECT COUNT(DEPT_CODE)
+FROM EMPLOYEE;
+
+--현재 사원들이 몇개의 부서에 분포되어 있는지
+SELECT COUNT(DISTINCT DEPT_CODE)
+FROM EMPLOYEE;
+
+
+
+
+
 
 
 
