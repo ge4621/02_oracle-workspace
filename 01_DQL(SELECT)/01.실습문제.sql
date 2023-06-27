@@ -107,7 +107,7 @@ FROM EMPLOYEE;
  --(단, 생년월일은 주민번호에서 추출해서 00년 00월 00일로 출력되게 하며
  --나이는 주민번호에서 출력해서 날짜데이터로 변환한 다음 계산)
  SELECT EMP_NAME, DEPT_CODE,TO_CHAR(TO_DATE(SUBSTR(EMP_NO,1,6)),'YY"년" MM"월" DD"일"') AS "생년월일",
-FLOOR(MONTHS_BETWEEN(SYSDATE,TO_DATE(SUBSTR(EMP_NO,1,6))/12)) AS "만나이"
+FLOOR(MONTHS_BETWEEN(SYSDATE,TO_DATE(SUBSTR(EMP_NO,1,6)))/12) AS "만나이"
  FROM EMPLOYEE;
  
 --22. EMPLOYEE테이블에서 부서코드가 D5, D6, D9인 사원만 조회하되 D5면 총무부, D6면 기획부, D9면 영업부로 처리
@@ -139,7 +139,6 @@ WHERE DEPT_CODE = 'D5';
  FROM EMPLOYEE
  GROUP BY TO_CHAR(HIRE_DATE,'YYYY"년"')
  ORDER BY TO_CHAR(HIRE_DATE,'YYYY"년"');
- 
  
  
  
