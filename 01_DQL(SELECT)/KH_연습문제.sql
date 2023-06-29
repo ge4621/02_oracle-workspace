@@ -174,7 +174,7 @@ WHERE ¼øÀ§ <=5;
 
 
 
-
+----------------------------------------------------------------
 
 SELECT EMP_ID, EMP_NAME, DEPT_TITLE, JOB_NAME, HIRE_DATE
 FROM EMPLOYEE
