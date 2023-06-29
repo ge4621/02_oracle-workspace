@@ -121,7 +121,7 @@ HAVING SUM(SALARY) = (SELECT MAX(SUM(SALARY))
 
 
 --직접해보기
---전지연 사원확 같은 부서원들의 사번, 사원명, 전화번호, 입사일 부서명
+--전지연 사원과 같은 부서원들의 사번, 사원명, 전화번호, 입사일 부서명
 --단, 전지연은 제외
 -->>오라클 전용 구문
 SELECT EMP_ID,EMP_NAME, PHONE, HIRE_DATE,DEPT_TITLE
@@ -325,6 +325,148 @@ SELECT EMP_NO, EMP_NAME, 연봉 ,DEPT_CODE  --, MANAGER_ID 이건 오류난다.
 FROM (SELECT EMP_NO, EMP_NAME , (SALARY + SALARY*NVL(BONUS,0))*12 AS "연봉", DEPT_CODE
 FROM EMPLOYEE)
 WHERE 연봉>=30000000;
+
+-->>인라인 뷰를 주로 사용하는 예 => TOP-N 분석 (상위 몇개만 보여주고 싶을 때 => BEST 상품!)
+
+-- 전직원 중 급여가 가장 높은 상위 5명만 조회
+--*ROWNUM : 오라클에서 저공해주는 컬럼, 조회된 순서대로 1부터 순번을 부여해주는 컬럼
+
+SELECT ROWNUM, EMP_NAME, SALARY --2번
+FROM  EMPLOYEE      --1번 
+ORDER BY SALARY DESC;   --뭔가 좀 이상하다....이유: 실행순서때문에
+--FROM -> SELECT ROWNUM(이때 순번이 부여됨. 정렬도 하기전에 이미 순번 부여
+
+SELECT ROWNUM, EMP_NAME, SALARY --2번
+FROM  EMPLOYEE --1번 
+--WHERE ROWNUM <= 5
+ORDER BY SALARY DESC;
+-->정상적으로 결과가 조회되지 않는다.(정력이 되기도 전에 5명이 추려지고 나서 정렬)
+
+--ORDER BY 절이 다 수행된 결과를 가지고 ROWNUM 부여 후 5명 추려야함!!
+SELECT EMP_NAME, SALARY, DEPT_CODE --2번
+FROM EMPLOYEE --1번
+ORDER BY SALARY DESC;   --3번
+
+SELECT ROWNUM, EMP_NAME, SALARY --2번
+FROM (SELECT EMP_NAME, SALARY, DEPT_CODE
+        FROM EMPLOYEE
+        ORDER BY SALARY DESC) --1번(FROM절이 1번이지만 ( )가 있기때문에 1번의 힘이 강해진다.
+WHERE ROWNUM <=5;
+
+--ROWNUM 이랑 전체컬럼 조회하고 싶음 => 별칭 부여하는 방법으로
+SELECT ROWNUM, E.*--EMP_NAME, SALARY --2번
+FROM (SELECT  * --EMP_NAME, SALARY, DEPT_CODE
+        FROM EMPLOYEE
+        ORDER BY SALARY DESC) E --1번(FROM절이 1번이지만 ( )가 있기때문에 1번의 힘이 강해진다.
+WHERE ROWNUM <=5;
+
+-----------------------------------------------------------------------------
+--1.가장 최근에 입사한 사원 5명 조회(사원 명, 급여, 입사일)
+SELECT EMP_NAME, SALARY, HIRE_DATE
+FROM EMPLOYEE
+ORDER BY HIRE_DATE DESC;
+
+
+SELECT ROWNUM, EMP_NAME, SALARY, HIRE_DATE
+FROM(SELECT * --EMP_NAME, SALARY, HIRE_DATE
+        FROM EMPLOYEE
+        ORDER BY HIRE_DATE DESC)
+WHERE ROWNUM <=5;
+
+
+--2. 각 부서별 평균 급여가 높은 3개의 부서 조회(부서코드, 평균급여)
+SELECT DEPT_CODE,AVG(SALARY) AS"평균급여"
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+ORDER BY 2 DESC;
+
+SELECT DEPT_CODE, FLOOR(평균급여)
+FROM (SELECT DEPT_CODE,AVG(SALARY) AS"평균급여" 
+        FROM EMPLOYEE
+        GROUP BY DEPT_CODE
+        ORDER BY 2 DESC)
+WHERE ROWNUM <=3; --ROWNUM을 직접 쓰지 않아도 생략되어 있어서 사용할 수 있다.
+--------------------------------------------------------------------------------
+/*
+    *순위 매기는 함수(WINDOW FUNCTION)
+    RANK() OVER(정렬기준)               |       DENSE_RANK() OVER(정렬기준)
+    
+    - RANK() OVER(정렬기준) : 동일한 순위 이후의 등수를 동일한 인원수 만큼 건너뛰고 순위 계산
+                            EX) 공동 1위가 2명 그 다음 순위는 3위 => 1등 1등 3등
+                            
+    - DENSE_RANK() OVER(정렬기준) : 동일한 순위가 있다고 해도 그 다음 등수를 무조건 1씩 증가 시킴
+                                    EX) 공동 1위가 2명이더라도 그 다음 순위를 2위 => 1등 1등 2등
+    >>두 함수는 모조건 SELECT절에서만 사용 가능!!
+*/
+
+--급여가 높은 순대로 순위를 매겨서 조회
+SELECT EMP_NAME, SALARY,RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE;
+--공동 19위 2명 그 뒤의 순위는 21 => 마지막 순위랑 조회된 행수랑 같다.
+
+SELECT EMP_NAME, SALARY,DENSE_RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE;
+--공동 19위 2명 그 뒤의 순위는 20 => 마지막 순위랑 조회된 행수가 다르다.(공동이 있을 시에)
+
+--상위 5명만 조회
+SELECT EMP_NAME, SALARY,RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE; --1번
+--WHERE 순위 -- 불가능 2번
+--WHERE RANK() OVER(ORDER BY SALARY DESC)<=5--오류 ,window function은 SELECT절에만 존재
+
+--인라인뷰를 쓸수 밖에 없음!!
+SELECT *
+FROM(SELECT EMP_NAME, SALARY,RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+    FROM EMPLOYEE)
+WHERE 순위 <=5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
