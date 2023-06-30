@@ -320,7 +320,7 @@ SELECT EMP_ID, EMP_NAME, EMAIL
 FROM EMPLOYEE
 WHERE EMAIL LIKE '___$_%' ESCAPE '$';
 
---위의 사원들이 아닌 그 외의 사원들 조회
+--위의 사원들이 아닌 그 외의 사원들 조회 
 SELECT EMP_ID, EMP_NAME, EMAIL
 FROM EMPLOYEE
 WHERE NOT EMAIL LIKE '___$_%' ESCAPE '$'; --NOT위치 둘다 가능
