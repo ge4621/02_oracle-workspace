@@ -463,6 +463,33 @@ ORDER BY DEPARTMENT_NAME;
 
 --DDL
 --2.
+CREATE TABLE TB_CLASS_TYPE(
+        NO VARCHAR2(5) PRIMARY KEY,
+        NAME VARCHAR2(10) 
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
