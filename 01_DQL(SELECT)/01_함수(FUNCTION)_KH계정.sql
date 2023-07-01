@@ -402,8 +402,8 @@ SELECT TO_CHAR(SYSDATE,'DDD'), --올해 기준으로 오늘이 며칠째인지
 FROM DUAL;
 
 --요일에 대한 포맷
-SELECT TO_CHAR(SYSDATE,'DAY'), --올해 기준으로 오늘이 며칠째인지
-        TO_CHAR(SYSDATE,'DY')--월 기준으로 오늘이 며칠째인지
+SELECT TO_CHAR(SYSDATE,'DAY'),
+        TO_CHAR(SYSDATE,'DY')
 FROM DUAL;
 -------------------------------------------------------------------------------
 /*
