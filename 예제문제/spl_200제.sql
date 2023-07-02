@@ -292,7 +292,7 @@ FROM EMP;
 
 -- 66. 직업이 SALESMAN인 사원들 중 최대월급 출력
 --SALESMAN의 월급
-SELECT SAL
+SELECT JOB, SAL
 FROM EMP
 WHERE JOB = 'SALESMAN';
 
@@ -301,60 +301,109 @@ SELECT MAX(SAL) AS "최대 월급"
 FROM EMP
 WHERE JOB = 'SALESMAN';
 
---JOB이 'SALESMAN'인 사람의 정보
-SELECT *
-FROM EMP
-WHERE JOB = 'SALESMAN';
-
 -- 67. 각 부서별 최대 급여 출력
 SELECT * FROM EMP;          --DEPTNO
 SELECT * FROM DEPT;         --DEPTNO
 
-SELECT MAX(SAL)
-FROM EMP
-JOIN DEPT(DEPTNO)
+--JOIN
+SELECT DNAME AS "부서이름", MAX(SAL) AS "월급 최대"
+FROM EMP 
+JOIN DEPT USING(DEPTNO)
+GROUP BY DNAME;
 
-
+--오라클
+SELECT DNAME AS "부서이름", MAX(SAL) AS "월급 최대"
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+GROUP BY DNAME;
 
 -- 68. 직업, 직업별 최소 월급 출력. 단, SALESMAN은 제외하고, 직업별 최소월급이 높은것 부터 출력
+SELECT * FROM EMP; 
 
-
+SELECT JOB AS "직업", MIN(SAL) AS "최소월급"
+FROM EMP
+WHERE JOB != 'SALESMAN'
+GROUP BY JOB
+ORDER BY MIN(SAL) DESC;
 
 -- 69. 직업과 직업별 월급의 총합을 출력. 단, SALESMAN은 제외하고,  총월급이 4000 이상인 직업만 출력
+SELECT JOB,SAL
+FROM EMP;
 
-
+SELECT JOB AS "직업", SUM(SAL) AS"월급 총합"
+FROM EMP
+WHERE JOB != 'SALESMAN'
+--AND SUM(SAL)>= 4000
+GROUP BY JOB;
 
 -- 70. 직업이 ANALYST, MANAGER 인 사원들의 이름, 직업, 월급, 월급의 순위 출력 (1위가 2명일시 다음은 바로 3위)
+SELECT * FROM EMP;
 
-
+SELECT ENAME AS"이름" ,JOB AS"직업", SAL AS"월급" , RANK() OVER (ORDER BY SAL DESC) AS"월급 순위"
+FROM EMP
+WHERE JOB = 'ANALYST' OR JOB = 'MANAGER';
 
 -- 71. 직업이 ANALYST, MANAGER 인 사원들의 이름, 직업, 월급, 월급의 순위 출력 (1위가 2명일시 다음은 바로 2위)
-
-
-
+SELECT ENAME AS"이름" ,JOB AS"직업", SAL AS"월급" , DENSE_RANK() OVER (ORDER BY SAL DESC) AS"월급 순위"
+FROM EMP
+WHERE JOB = 'ANALYST' OR JOB = 'MANAGER';
 
 -- 72. 사원테이블에서 사원번호, 이름, 직업, 월급을 출력. 단, 월급높은 상위 5개의 행만 출력
+SELECT EMPNO AS "사원번호", ENAME AS "이름", JOB AS"직업",SAL AS"월급"
+FROM EMP
+ORDER BY SAL DESC;
 
-
+--ROWNUM
+SELECT EMPNO AS "사원번호", ENAME AS "이름", JOB AS"직업",SAL AS"월급"
+FROM (SELECT EMPNO, ENAME, JOB,SAL
+        FROM EMP
+        ORDER BY SAL DESC)
+WHERE ROWNUM <= 5;
 
 -- 73. 사원테이블과 급여테이블을 조인하여 사원명, 급여, 급여등급 출력 (ANSI, ORACLE)
+SELECT * FROM EMP;   --SAL
+SELECT * FROM DEPT;
+SELECT * FROM SALGRADE;     --LOSAL  --HISAL
 
+--오라클
+SELECT ENAME AS"사원명", SAL AS"급여", GRADE AS"급여등급"
+FROM EMP, SALGRADE
+WHERE SAL BETWEEN LOSAL AND HISAL;
 
-
+--ANSI
+SELECT ENAME AS"사원명", SAL AS"급여", GRADE AS"급여등급"
+FROM EMP
+JOIN SALGRADE ON(SAL BETWEEN LOSAL AND HISAL);
 
 -- 74. 사원테이블과 부서테이블을 조인하여 이름과 부서위치 출력(단, BOSTON 도 같이 출력되게 해볼 것)(ANSI, ORACLE)
+SELECT * FROM EMP;          --DEPTNO
+SELECT * FROM DEPT;         --DEPTNO
 
+--오라클
+SELECT ENAME AS"이름",LOC AS"부서위치"
+FROM EMP E, DEPT D
+WHERE E.DEPTNO(+) = D.DEPTNO;
 
+--ANSI
+SELECT ENAME AS"이름",LOC AS"부서위치"
+FROM EMP
+RIGHT JOIN DEPT USING(DEPTNO);
 
+-- *75. 사원 테이블을 셀프조인 하여 이름, 직업, 해당사원의 관리자 이름과 관리자의 직업 출력(ANSI, ORACLE)
+SELECT * FROM EMP;  -- EMPNO 사번 , MGR 관리자사번
 
--- 75. 사원 테이블을 셀프조인 하여 이름, 직업, 해당사원의 관리자 이름과 관리자의 직업 출력(ANSI, ORACLE)
+SELECT E.ENAME AS "이름", E.JOB AS "직업",E.EMPNO AS"사번" ,M.ENAME AS "관리자 이름", M.JOB AS"관리자 직업", M.EMPNO AS"관리자 사번"
+FROM EMP E, EMP M
+WHERE E.EMPNO = M.MGR(+);
 
-
+SELECT E.ENAME AS "이름", E.JOB AS "직업",E.EMPNO AS"사번" ,M.ENAME AS "관리자 이름", M.JOB AS"관리자 직업", M.EMPNO AS"관리자 사번"
+FROM EMP E
+RIGHT JOIN EMP M ON(E.EMPNO = M.MGR);
 
 
 -- 76. 사원테이블과 부서테이블 조인하여 이름, 직업,월급,부서위치 출력 (단, 사원명 JACK의 데이터와 부서위치 BOSTON의 데이터 둘다 나와야함)
-
-
+SELECT * FROM EMP;              --DEPTNO
+SELECT * FROM DEPT;             --DEPTNO
 
 
 
