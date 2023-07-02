@@ -50,7 +50,6 @@ SELECT ENAME AS "이름", SAL AS "월급", JOB AS "직업"
 FROM EMP
 WHERE SAL =3000;
 
-
 -- 9. 월급이 3000이상인 사원의 이름과, 월급, 직업 출력
 SELECT ENAME AS "이름", SAL AS "월급", JOB AS "직업"
 FROM EMP
@@ -123,12 +122,12 @@ SELECT ENAME AS "이름", SAL AS "월급", JOB AS "직업"
 FROM EMP
 WHERE JOB = 'SALESMAN' AND SAL >=1200;
 
---다시 21. 사원테이블의 이름 출력시 첫번째 컬럼은 이름을 대문자로 출력하고, 두번째 컬럼은 이름을 소문자로 출력하고, 세번째 컬럼은 이름의 첫 번째 철자는 대문자로 하고 나머지는 소문자로 출력
+-- 21. 사원테이블의 이름 출력시 첫번째 컬럼은 이름을 대문자로 출력하고, 두번째 컬럼은 이름을 소문자로 출력하고, 세번째 컬럼은 이름의 첫 번째 철자는 대문자로 하고 나머지는 소문자로 출력
 
 SELECT UPPER(ENAME) AS "대문자" , LOWER(ENAME) AS "소문자", INITCAP(ENAME) AS "대소문자"
 FROM EMP;
 
---다시 22. 이름이 soctt 인 사원의 이름과 월급을 조회하는 쿼리 => where절에 scott 글자를 소문자로 작성할 것! 1행 나와야함
+--22. 이름이 soctt 인 사원의 이름과 월급을 조회하는 쿼리 => where절에 scott 글자를 소문자로 작성할 것! 1행 나와야함
 SELECT LOWER(ENAME)AS "이름", SAL AS "월급"
 FROM EMP
 WHERE LOWER(ENAME) = 'scott';
@@ -186,8 +185,9 @@ SELECT * FROM TEST_ENAME;
 SELECT REPLACE(ENAME,SUBSTR(ENAME,2,1),'*') AS "이름의 두번째 글자*"
 FROM TEST_ENAME;
 
--- *34. 이름과 월급을 출력하는데 월급컬럼의 자리수를 10자리로 하여 월급 출력하고, 남은자리는 *로 채워서 출력
-
+-- 34. 이름과 월급을 출력하는데 월급컬럼의 자리수를 10자리로 하여 월급 출력하고, 남은자리는 *로 채워서 출력
+SELECT ENAME, RPAD(SAL,10,'*')
+FROM EMP;
 
 -- 35. 첫번째 컬럼은 smith 철자를 출력하고, 두번째 컬럼은 영어단어 smith에서 s를 잘라서 출력하고, 세번째 컬럼은 smith에서 h잘라서 출력하고
 --     네번째 컬럼은 영어단어 smiths의 양쪽 s를 제거하여 출력 ( smith, mith, smit, mith ) =>  배웠던 함수 활용
@@ -285,10 +285,20 @@ SELECT EMPNO AS "사원 번호", DECODE(MOD(EMPNO,2),0,'짝수',1,'홀수') AS "홀/짝"
 FROM EMP;
 
 -- 64. 사원의 이름과 직업과 보너스를 출력. 직업이 SALESMAN이면 보너스를 5000이라고 출력하고 그 외는 2000이라고 출력 
-
+SELECT ENAME AS "이름",JOB AS "직업",
+    CASE WHEN JOB = 'SALESMAN' THEN '5000'
+        ELSE '2000'
+    END AS "보너스"
+FROM EMP;
 
 -- 65. 이름, 직업,월급, 보너스 출력. 보너스는 월급이 3000이상이면 500. 2000이상~3000 보다 작으면 300. 월급이 1000이상~2000 보다 작으면 200 나머지는 0 => CASE WHEN THEN 구문
-
+SELECT ENAME AS "이름", JOB AS "직업",SAL AS"월급",
+    CASE WHEN SAL >='3000' THEN '500'
+         WHEN SAL BETWEEN '2000' AND '3000' THEN '300'
+         WHEN SAL BETWEEN '1000' AND '2000' THEN '200'
+         ELSE '0'
+    END AS "보너스"
+FROM EMP;
 
 -- 66. 직업이 SALESMAN인 사원들 중 최대월급 출력
 --SALESMAN의 월급
@@ -392,18 +402,21 @@ RIGHT JOIN DEPT USING(DEPTNO);
 -- *75. 사원 테이블을 셀프조인 하여 이름, 직업, 해당사원의 관리자 이름과 관리자의 직업 출력(ANSI, ORACLE)
 SELECT * FROM EMP;  -- EMPNO 사번 , MGR 관리자사번
 
+--오라클
 SELECT E.ENAME AS "이름", E.JOB AS "직업",E.EMPNO AS"사번" ,M.ENAME AS "관리자 이름", M.JOB AS"관리자 직업", M.EMPNO AS"관리자 사번"
 FROM EMP E, EMP M
 WHERE E.EMPNO = M.MGR(+);
 
+--ANSI
 SELECT E.ENAME AS "이름", E.JOB AS "직업",E.EMPNO AS"사번" ,M.ENAME AS "관리자 이름", M.JOB AS"관리자 직업", M.EMPNO AS"관리자 사번"
 FROM EMP E
 RIGHT JOIN EMP M ON(E.EMPNO = M.MGR);
-
 
 -- 76. 사원테이블과 부서테이블 조인하여 이름, 직업,월급,부서위치 출력 (단, 사원명 JACK의 데이터와 부서위치 BOSTON의 데이터 둘다 나와야함)
 SELECT * FROM EMP;              --DEPTNO
 SELECT * FROM DEPT;             --DEPTNO
 
-
+SELECT ENAME AS "이름", JOB AS"직업", SAL AS "월급", LOC AS "부서 위치"
+FROM EMP
+FULL JOIN DEPT USING(DEPTNO);
 
