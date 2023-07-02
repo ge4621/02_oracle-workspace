@@ -114,7 +114,7 @@ FROM EMPLOYEE;
     
     LPAD / RPAD(STRING , 최종적으로 반환할 문자의 길이, [덧붙이고자하는 문자])
     
-    문자열에 덧붙이고자 하는 문자를 왼쪽 또는 오른쪽에 덧붙여서 최종 N길이 만큼의 문자열으 반환
+    문자열에 덧붙이고자 하는 문자를 왼쪽 또는 오른쪽에 덧붙여서 최종 N길이 만큼의 문자열으로 반환
 */
 
 SELECT EMP_NAME, LPAD(EMAIL,20) -- 덧붙이고자 하는 문자 생략시 기본값이 공백
@@ -195,7 +195,7 @@ SELECT INITCAP('Welcome To My World') FROM DUAL;
 -----------------------------------------------------------------
 
 /*
-    *CONCAY
+    *CONCAT
     문자열 두개 전달 받아 하나고 합친 후 결과 반환
     
     CONCAT(STRING, STRING) => 결과값 CHARACTER타입
