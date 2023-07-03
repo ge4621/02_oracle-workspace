@@ -86,6 +86,7 @@ COMMENT ON COLUMN MEMBER.MEM_DATE IS '회원가입일';
 --테이블을 삭제하고자 할 때 : DROP TABLE 테이블명;
 
 --테이블에 데이터 추가시키는 구문(DML : INSERT) 이때 자세하게 배움
+
 --INSERT INTO 테이블 명 VALUES (값1, 값2,값3...);
 SELECT * FROM MEMBER;
 -- INSERT INTO MEMBER VALUES(1, 'user01', 'pass01', '홍길동'); -- 다 입력 안하면 에러남. 따라서 전체 값 입력해야함
