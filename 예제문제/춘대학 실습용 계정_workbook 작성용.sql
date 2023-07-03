@@ -449,32 +449,25 @@ ORDER BY DEPARTMENT_NAME;
 
 
 --DDL
+--1.
+CREATE TABLE TB_CATEGORY(
+        NAME VARCHAR2(10),
+        USE_YN CHAR(1) DEFAULT 'Y'
+    );
+
 --2.
 CREATE TABLE TB_CLASS_TYPE(
         NO VARCHAR2(5) PRIMARY KEY,
         NAME VARCHAR2(10) 
     );
 
+--3. TB_CATAGORY 테이블의 NAME 컬럼에 PRIMARY KEY 를 생성하시오.
+--(KEY 이름을 생성하지 않아도 무방함. 맊일 KEY 이를 지정하고자 핚다면 이름은 본인이
+--알아서 적당한 이름을 사용핚다.)
+ALTER TABLE TB_CATEGORY ADD PRIMARY KEY (NAME);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--4.TB_CLASS_TYPE 테이블의 NAME 컬럼에 NULL 값이 들어가지 않도록 속성을 변경하시오
+ALTER TABLE TB_CLASS_TYPE MODIFY NAME NOT NULL;
 
 
 
