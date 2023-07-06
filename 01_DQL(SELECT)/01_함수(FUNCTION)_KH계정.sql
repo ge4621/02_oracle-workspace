@@ -258,10 +258,10 @@ SELECT ROUND(123.456,-2) FROM DUAL;
 
 --------------------------------------------------------------------------------
 /*
-    *CELL
+    *CEIL
     올림처리 해주는 함수
     
-    CELL(NUMBER)
+    CEIL(NUMBER)
 */
 SELECT CEIL(123.152) FROM DUAL; -- 5이상이 아니여도 무조건 그냥 올림!!위치지정 불가
 
@@ -311,7 +311,7 @@ FROM EMPLOYEE;
 SELECT SYSDATE, NEXT_DAY(SYSDATE,'금요일') FROM DUAL;
 SELECT SYSDATE, NEXT_DAY(SYSDATE,'금') FROM DUAL;
 --1.일요일 2.월요일 3.화요일.....
-SELECT SYSDATE, NEXT_DAY(SYSDATE,'6') FROM DUAL;
+SELECT SYSDATE, NEXT_DAY(SYSDATE,6) FROM DUAL;
 SELECT SYSDATE, NEXT_DAY(SYSDATE,'FRIDAY') FROM DUAL; --현재 언어가 KOREAN이기 때문
 
 --언어변경
