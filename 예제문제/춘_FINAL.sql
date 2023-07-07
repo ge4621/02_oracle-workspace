@@ -154,24 +154,51 @@ WHERE COMPOSE_TYPE IN ('옮김','역주','편역','공역');
 
 
 --12. 2007년도에 출판된 번역서 이름과 번역자(역자)를 표시하는 SQL 구문을 작성하시오.
+SELECT * FROM TB_BOOK;              --BOOK_NO
+SELECT * FROM TB_BOOK_TRANSLATOR;   --BOOK_NO       --WRITER_NO
+SELECT * FROM TB_WRITER;                            --WRITER_NO
 
 
-SELECT * 
+SELECT BOOK_NM,WRITER_NM,ISSUE_DATE
 FROM TB_BOOK
-WHERE SUBSTR(ISSUE_DATE,1,2)=07;
-
-
-
+JOIN TB_BOOK_TRANSLATOR USING(BOOK_NO)
+JOIN TB_WRITER USING (WRITER_NO)
+WHERE SUBSTR(ISSUE_DATE,1,2)=07
+ORDER BY WRITER_NM DESC;
 
 
 --13. 12번 결과를 활용하여 대상 번역서들의 출판일을 변경할 수 없도록 하는 뷰를 생성하는 SQL
 --구문을 작성하시오. (뷰 이름은 “VW_BOOK_TRANSLATOR”로 하고 도서명, 번역자, 출판일이
 --표시되도록 할 것)
+GRANT CREATE VIEW TO workshop;
 
+SELECT * FROM TB_BOOK;              --BOOK_NO
+SELECT * FROM TB_BOOK_TRANSLATOR;   --BOOK_NO       --WRITER_NO
+SELECT * FROM TB_WRITER;                            --WRITER_NO
+
+
+CREATE VIEW VW_BOOK_TRANSLATOR
+AS SELECT BOOK_NM,WRITER_NM,ISSUE_DATE
+        FROM TB_BOOK
+        JOIN TB_BOOK_TRANSLATOR USING(BOOK_NO)
+        JOIN TB_WRITER USING (WRITER_NO)
+        WHERE SUBSTR(ISSUE_DATE,1,2)=07
+        ORDER BY WRITER_NM DESC
+WITH READ ONLY;
+
+SELECT * FROM USER_VIEWS;
+
+--뷰삭제
+--DROP VIEW VW_BOOK_TRANSLATOR;
 
 --14. 새로운 출판사(춘 출판사)와 거래 계약을 맺게 되었다. 제시된 다음 정보를 입력하는 SQL
 --구문을 작성하시오.(COMMIT 처리할 것)
+SELECT * FROM TB_PUBLISHER;
 
+INSERT INTO TB_PUBLISHER
+VALUES('춘 출판사','02-6710-3939',DEFAULT);
+
+COMMIT;
 
 --15. 동명이인(同名異人) 작가의 이름을 찾으려고 한다. 이름과 동명이인 숫자를 표시하는 SQL 구문을
 --작성하시오.
@@ -179,17 +206,42 @@ SELECT * FROM TB_WRITER;
 
 SELECT WRITER_NM, COUNT(WRITER_NM)
 FROM TB_WRITER
-GROUP BY WRITER_NM;
+GROUP BY WRITER_NM
+ORDER BY COUNT(WRITER_NM) DESC;
 
-
+SELECT WRITER_NM ,동명이인수
+FROM (SELECT WRITER_NM, COUNT(WRITER_NM) AS"동명이인수"
+        FROM TB_WRITER
+        GROUP BY WRITER_NM
+        ORDER BY COUNT(WRITER_NM) DESC)
+WHERE 동명이인수>1;
 
 
 --16. 도서의 저자 정보 중 저작 형태(compose_type)가 누락된 데이터들이 적지 않게 존재한다. 해당 컬럼이
 --NULL인 경우 '지음'으로 변경하는 SQL 구문을 작성하시오.(COMMIT 처리할 것)
+SELECT * FROM TB_BOOK_AUTHOR;
+
+UPDATE TB_BOOK_AUTHOR
+SET COMPOSE_TYPE = '지음'
+WHERE COMPOSE_TYPE IS NULL;
+
+COMMIT;
+
+SELECT *
+FROM TB_BOOK_AUTHOR
+WHERE compose_type IS NULL;
 
 
 --17. 서울지역 작가 모임을 개최하려고 한다. 사무실이 서울이고, 사무실 전화 번호 국번이 3자리인 작가의
 --이름과 사무실 전화 번호를 표시하는 SQL 구문을 작성하시오.
+SELECT * FROM TB_WRITER;
+
+SELECT WRITER_NM, OFFICE_TELNO
+FROM TB_WRITER
+WHERE SUBSTR(OFFICE_TELNO,1,2) = '02'
+AND LENGTH(OFFICE_TELNO) = 11
+ORDER BY WRITER_NM;
+
 
 
 --18. 2006년 1월 기준으로 등록된 지 31년 이상 된 작가 이름을 이름순으로 표시하는 SQL 구문을 작성하시오.
