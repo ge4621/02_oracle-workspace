@@ -13,7 +13,7 @@
     - CREATE SESSION : 접속 할 수 있는 권한
     - CREATE TABLE : 테이블을 생성할 수 있는 권한
     - CREATE VIEW : 뷰를 생성할 수 있는 권한
-    - CREATE DEQUENCE : 시퀀스를 생성할 수 있는 권한
+    - CREATE SEQUENCE : 시퀀스를 생성할 수 있는 권한
     .......: 일부는 커넥트안에 포함되어 있다.
 */
 

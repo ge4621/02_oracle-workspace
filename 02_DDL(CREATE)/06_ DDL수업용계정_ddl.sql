@@ -83,6 +83,8 @@ COMMENT ON COLUMN MEMBER.PHONE IS '전화번호';
 COMMENT ON COLUMN MEMBER.EMAIL IS '이메일';
 COMMENT ON COLUMN MEMBER.MEM_DATE IS '회원가입일';
 
+
+
 --테이블을 삭제하고자 할 때 : DROP TABLE 테이블명;
 
 --테이블에 데이터 추가시키는 구문(DML : INSERT) 이때 자세하게 배움
@@ -100,7 +102,7 @@ INSERT INTO MEMBER VALUES(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 /*
     <제약조건 CONSTRAINTS>
-    -원하는 데이터값(유효성 형식의 값)만 유지하기위해 특정 컬럼에 설정되는 제액조건
+    -원하는 데이터값(유효성 형식의 값)만 유지하기위해 특정 컬럼에 설정되는 제약조건
     데이터 무결성 보장을 목적으로한다. 무결성=(데이터의 결함이 없다.)
     
     *종류 : NOT NULL ,UNIQUE,CHECK,PRIMARY KEY, FOREIGN KEY
@@ -175,7 +177,7 @@ INSERT INTO MEM_UNIQUE VALUES(1,'user01','pass01','손흥민',null,null,null);
 INSERT INTO MEM_UNIQUE VALUES(2,'user01','pass02','이강인',null,null,null);
 --ORA-00001: unique constraint (DDL.SYS_C007115) violated
 -->UNIQUE 제약조건에 위배되었음! INSERT실패!!
---> 오류구문을 제약조건명으로 알려줌!!(튿정 컬럼에 어떤 문제가 있는지 상세하게 알려주지 않음!)
+--> 오류구문을 제약조건명으로 알려줌!!(특정 컬럼에 어떤 문제가 있는지 상세하게 알려주지 않음!)
 --> 쉽게 파악하기 어렵다.
 -->제약조건 부여시 제약조건명을 지정해주지 않으면 시스템에서 임의의 제약조건명을 부여햐버림
 
@@ -389,7 +391,7 @@ VALUES(3,'user03','pass03','이승우','남',null,null,40);
     *FOREIGN KEY(외래키) 제약조건
     다른 테이블에 존재하는 값만 들어와야 되는 특정 컬럼에 부여하는 제약 조건
     --> 다른 테이블을 참조한다고 표현
-    -->주로 FOREIGN KEY 제약조건에 의해 테이블간의 관걔가 형성된다.
+    -->주로 FOREIGN KEY 제약조건에 의해 테이블간의 관계가 형성된다.
     
     >컬럼레벌방식
     컬럼명 자료형 [CONSTRAINT 제약조건명] REFERENCES 참조할 테이블 명[(참조할 컬럼명)]

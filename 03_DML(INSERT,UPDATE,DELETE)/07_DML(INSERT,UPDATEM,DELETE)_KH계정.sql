@@ -319,7 +319,7 @@ COMMIT;
     
     [표현식]
     DELETE FROM 테이블명
-    [WHERE 조건;] --WHERE 절 조건 제시 안하면 전체 행 다 삭제됨
+    [WHERE 조건]; --WHERE 절 조건 제시 안하면 전체 행 다 삭제됨
 */
 --차은우 사원의 데이터 지우기
 DELETE FROM EMPLOYEE;

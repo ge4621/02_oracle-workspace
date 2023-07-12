@@ -47,7 +47,7 @@ NOCACHE;
 
 /*
     2.시퀀스 사용
-    시퀀스AUD.CURRVAL : 현재 시퀀스 값(마지막으로 성공적으로 수행된 NEXTVAL의 값
+    시퀀스명.CURRVAL : 현재 시퀀스 값(마지막으로 성공적으로 수행된 NEXTVAL의 값
     시퀀스명.NEXTVAL : 시퀀스값에 일정값을 증가시켜서 방생된 값
                         현재 시퀀스 값에서 INCREMENT BY 값 만큼 증가된 값
                         --시퀀스명.CURRVAL + INCREMENT BY
