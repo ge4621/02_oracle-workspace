@@ -73,7 +73,7 @@ SELECT SEQ_EMPNO.NEXTVAL FROM DUAL;
 
 /*
     3. 시퀀스 구조 변경
-    CREATE SEQUENCE 시퀀스명
+    ALTER SEQUENCE 시퀀스명
     [INCREMENT BY 숫자]      --몇 씩 증가시킬껀지 (기본값 1)
     [MAXVALUE 숫자]          --최대값 지정 (기본값 겁나큼...)
     [MINVALUE 숫자]          --최소값 지정 (기본값 1)
